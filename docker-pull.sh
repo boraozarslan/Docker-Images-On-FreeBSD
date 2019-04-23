@@ -33,6 +33,7 @@ else
 	usage
 fi
 
+curr=$(pwd)
 info "Pulling docker image '${imageName}'s layers into ${newDir}/image-files."
 
 mkdir ${newDir}
@@ -42,8 +43,8 @@ cd ${newDir}
 mkdir image-files
 check_result $? "Couldn't create directory ${newDir}/image-files."
 
-/home/boraozarslan/.scripts/moby image-files/ $1:$2
-check_result $? "Moby script failed."
+sudo ${curr}/download-frozen-image-v2.sh image-files/ $1:$2
+check_result $? "Image download script failed."
 
 info "Creating the filesystem of the corresponding image into ${newDir}/fs."
 
