@@ -1,4 +1,4 @@
-# Docker Images On FreeBSD 
+# Docker Images On FreeBSD
 
 This repository explains how to download and run docker images on FreeBSD.
 
@@ -72,7 +72,7 @@ Download the following script that can download images from docker:
 
 Change the `sha256sum` to `sha256` at line 109.
 If you don't put this into the same folder as the project or if you change the name, you will
-need to change the `docker-pull.sh` script to use the correct script. 
+need to change the `docker-pull.sh` script to use the correct script.
 
 ## Scripts
 
@@ -117,7 +117,7 @@ Note that currently user images return an authentication error.
 
 docker-run will try to figure out what command would run when `docker run` command is used.
 
-The usage is 
+The usage is
 
 ```
 $ docker-run
@@ -133,6 +133,38 @@ environment variables so if the program fails this could be the reason.
 
 [Here](http://goinbigdata.com/docker-run-vs-cmd-vs-entrypoint/) is a link explaining how docker decides what to run. `docker-run` is written with this in mind.
 
+## Tested Containers
+
+The following containers from the Docker Hub have been tested to see if they work.
+Note that none of the tests were exhaustive but were smoke tests.
+
+### Passed
+
+* busybox
+* alpine
+* node
+* hello-world
+* gcc
+* nginx
+* pypy
+* bash
+* rust
+* php
+* python
+* ubuntu
+
+### Failed
+
+Note that some of these failures are because of my lack of knowledge of the underlying application.
+
+* couchbase - The errors are hard to trace because couchbase outputs it's own errors by printing out each character, essentially hiding the error message from the linuxulator by generating too many error messages while tracing.
+* postgres - Needs some configuration.
+* wordpress - The default configuration seems to fail. It is trying to load two modules that require the other to not be loaded. However, unloading either doesn't seem to fix the problem.
+* redis - linprocfs uses pseudo file system. Since redis is trying to use `linux_fchownat` via the pseudo fs it fails. This is because `pfs_setattr` isn't implemented.
+* debian - `apt-get install` fails because ioctl isn't fully implemented.
+* traefik - Leads to an error saying `Error creating server: accept tcp: accept4: address family not supported by protocol`. The only failing function seems to be `linux_accept4` which is returning an error of `EAGAIN`.
+* openjdk - Fails on startup.
+
 ## Sources
 
 * [Notes on Linuxulator on FreeBSD](https://www.bsdcan.org/2018/schedule/attachments/473_linuxulator-notes-bsdcan2018.txt)
@@ -147,11 +179,11 @@ environment variables so if the program fails this could be the reason.
 
 ## License
 
-This project is licensed under the BSD-2-clause. 
+This project is licensed under the BSD-2-clause.
 
 ## Acknowledgments
 
-* [Thanks to the people who wrote the docker image download script](https://github.com/moby/moby) 
+* [Thanks to the people who wrote the docker image download script](https://github.com/moby/moby)
 * Thanks Ed Maste for responding to my every question.
 * Thanks to everyone who explained how these programs behave.
 
