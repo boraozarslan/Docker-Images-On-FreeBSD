@@ -62,12 +62,15 @@ else
 fi
 
 # Command is the default parameter/command
-while read line; do
-	arg2=$(echo ${line} | sed 's/^"//g')
-	arg3=$(echo ${arg2} | sed 's/"$//g')
-	dockerRun[${index}]=${arg3}
-	index=$((index+1))
-done < <(cat ${configJson} | jq '.config.Cmd[]')
+commands=$(cat ${configJson} | jq '.config.Cmd[]' 2>/dev/null)
+if [[ $? == 0 ]]; then
+	while read line; do
+		arg2=$(echo ${line} | sed 's/^"//g')
+		arg3=$(echo ${arg2} | sed 's/"$//g')
+		dockerRun[${index}]=${arg3}
+		index=$((index+1))
+	done < <(cat ${configJson} | jq '.config.Cmd[]')
+fi
 
 info "Expected Environment Variables:"
 while read line; do
